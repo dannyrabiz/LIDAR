@@ -59,8 +59,9 @@ python lidar.py \
   /path/to/DeepVariant/sample.vcf \
   SampleID \
   output_lidar.vcf
+```
 ---
----
+
 
 ## Input
 
