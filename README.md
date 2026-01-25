@@ -9,6 +9,7 @@
 
 ```bash
 lidar gatk.vcf.gz dv.vcf.gz work output --ref-sdf hg19.sdf
+```
 ---
 
 ## Key Features
