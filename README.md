@@ -32,10 +32,15 @@ The framework was developed and validated using a large cohort of patients with 
 
 ## Installation
 
-No package installation is required.
 
-LIDAR is implemented as a set of Python scripts and requires access to VCF outputs from GATK and DeepVariant.
+Clone the repository and install the Python environment:
 
+```bash
+git clone https://github.com/<org>/lidar.git
+cd lidar
+conda env create -f environment.yml
+conda activate lidar
+```
 ---
 
 ## Requirements
@@ -49,16 +54,38 @@ Python dependencies such as `scikit-learn`, `numpy`, and `pandas` should be inst
 
 ---
 
-## Usage
+## Reference Genome (RTG SDF)
 
-Run LIDAR on a single sample using:
+LIDAR requires an RTG Tools reference SDF corresponding to the same genome
+build used for variant calling (e.g., hg19 or GRCh38).
+
+Create the SDF once using:
 
 ```bash
-python lidar.py \
-  /path/to/GATK/sample.vcf \
-  /path/to/DeepVariant/sample.vcf \
-  SampleID \
-  output_lidar.vcf
+rtg format -o hg19.sdf hg19.fa
+```
+---
+
+## Usage
+
+Run LIDAR on a single sample:
+
+```bash
+lidar \
+  sample.gatk.vcf.gz \
+  sample.dv.vcf.gz \
+  workdir \
+  output_prefix \
+  --ref-sdf /path/to/reference.sdf
+```
+Alternatively, without installing the CLI:
+
+```python -m lidar.lidar \
+  sample.gatk.vcf.gz \
+  sample.dv.vcf.gz \
+  workdir \
+  output_prefix \
+  --ref-sdf /path/to/reference.sdf
 ```
 ---
 
@@ -75,10 +102,9 @@ python lidar.py \
 ## Output
 
 - A VCF file containing:
-  - Variants called by both GATK and DeepVariant
+  - Variants called by both GATK and DeepVariant 
   - High-confidence variants rescued by the LIDAR ensemble
-- All retained variants are annotated with caller provenance and model confidence
-
+    
 ---
 
 ## Intended Use
