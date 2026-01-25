@@ -82,7 +82,8 @@ lidar \
 ```
 Alternatively, without installing the CLI:
 
-```python -m lidar.lidar \
+```
+python -m lidar.lidar \
   sample.gatk.vcf.gz \
   sample.dv.vcf.gz \
   workdir \
