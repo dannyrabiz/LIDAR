@@ -4,10 +4,11 @@
 
 **LIDAR** is a machine-learning–based ensemble framework for **robust germline variant detection** in whole-exome sequencing (WES) and whole-genome sequencing (WGS) data. It integrates outputs from two state-of-the-art germline variant callers—**GATK HaplotypeCaller** and **DeepVariant**—using stacked Random Forest meta-models to improve sensitivity and specificity for **rare pathogenic variants**, particularly in **non-ideal clinical samples**.
 
-While modern germline variant callers achieve high overall accuracy (>99%) on typical WES/WGS data, their performance degrades substantially for **rare variants**, **low-coverage samples**, and **heterogeneous clinical cohorts**. LIDAR addresses this gap by learning caller-specific error modes and selectively rescuing true variants missed by individual pipelines.
+---
+### Quickstart
 
-The framework was developed and validated using a large cohort of patients with metastatic prostate cancer and is designed to generalize to real-world clinical sequencing data.
-
+```bash
+lidar gatk.vcf.gz dv.vcf.gz work output --ref-sdf hg19.sdf
 ---
 
 ## Key Features
@@ -133,8 +134,7 @@ LIDAR is intended for:
 
 If you use LIDAR in your work, please cite:
 
-> *[Manuscript title]*  
-> Rabizadeh et al., *in preparation*
+> Rabizadeh et al. Manuscript in preparation.
 
 (A DOI and final citation will be added upon publication.)
 
