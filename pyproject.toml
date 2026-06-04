@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lidar-variant"
+version = "0.1.0"
+description = "Learning-based Integration of DeepVariant And bayesian inference for Rare variant detection"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Daniel Rabizadeh", email = "drabiza1@jhu.edu" },
+]
+keywords = [
+    "bioinformatics", "variant-calling", "germline", "ensemble",
+    "GATK", "DeepVariant", "random-forest", "rare-variants",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+# The bundled Random Forest models were trained with scikit-learn 1.2.x.
+# scikit-learn changed its internal tree format in 1.3, so the pinned range
+# is required for the shipped pickles to load. See README "Model compatibility".
+dependencies = [
+    "numpy<2",
+    "pandas>=1.3",
+    "scikit-learn>=1.2,<1.3",
+]
+
+[project.urls]
+Homepage = "https://github.com/dannyrabiz/LIDAR"
+Repository = "https://github.com/dannyrabiz/LIDAR"
+
+[project.scripts]
+lidar = "lidar.lidar:main"
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[tool.setuptools]
+packages = ["lidar"]
+
+[tool.setuptools.package-data]
+lidar = ["resources/models/*.pkl", "resources/headers/*.txt"]

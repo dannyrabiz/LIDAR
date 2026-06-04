@@ -34,25 +34,46 @@ lidar gatk.vcf.gz dv.vcf.gz work output --ref-sdf hg19.sdf
 
 ## Installation
 
+Clone the repository and install the package. Either of the following works.
 
-Clone the repository and install the Python environment:
+**With pip:**
 
 ```bash
-git clone https://github.com/<org>/lidar.git
-cd lidar
+git clone https://github.com/dannyrabiz/LIDAR.git
+cd LIDAR
+pip install .
+```
+
+**With conda:**
+
+```bash
+git clone https://github.com/dannyrabiz/LIDAR.git
+cd LIDAR
 conda env create -f environment.yml
 conda activate lidar
 ```
+
+Both methods install the `lidar` command-line tool and the Python package.
+
 ---
 
 ## Requirements
 
-- Python ≥ 3.8  
-- GATK ≥ 4.x  
-- DeepVariant ≥ 1.x  
+- Python ≥ 3.8
+- [RTG Tools](https://github.com/RealTimeGenomics/rtg-tools) (`rtg`) on your `PATH` — used to reconcile variant representation between callers
+- GATK ≥ 4.x and DeepVariant ≥ 1.x — used upstream to *produce* the input VCFs (not called by LIDAR itself)
 - GLnexus (for joint genotyping, if applicable)
 
-Python dependencies such as `scikit-learn`, `numpy`, and `pandas` should be installed in your environment.
+Python dependencies (`numpy`, `pandas`, `scikit-learn`) are installed automatically.
+
+### Model compatibility
+
+> ⚠️ The pretrained Random Forest models bundled with LIDAR were trained with
+> **scikit-learn 1.2.x**. scikit-learn changed its internal tree format in 1.3,
+> so the models will not unpickle under scikit-learn ≥ 1.3. The dependency pin
+> (`scikit-learn>=1.2,<1.3`) handles this automatically; if you manage your own
+> environment, install a compatible version. To use a newer scikit-learn you
+> would need to retrain the models (see `Hybrid_Training_Testing.ipynb`).
 
 ---
 
@@ -125,10 +146,25 @@ LIDAR is intended for:
 
 ## Repository Contents
 
-- `lidar.py` – Main LIDAR inference script  
-- `models/` – Pretrained Random Forest classifiers  
-- `utils/` – Helper functions for feature extraction and VCF handling  
-- `README.md` – This file  
+- `lidar/lidar.py` – Main LIDAR inference script and CLI
+- `lidar/resources/models/` – Pretrained Random Forest classifiers (`GATK_RF.pkl`, `DV_RF.pkl`)
+- `lidar/resources/headers/` – VCF header templates for the output
+- `Hybrid_Training_Testing.ipynb` – Notebook used to build truth sets and train the models
+- `VariantCallingComparison.ipynb` – Analysis/figure-generation notebook
+- `tests/` – Regression tests verifying the package reproduces the original notebook logic
+- `pyproject.toml` / `environment.yml` – Packaging and environment definitions
+
+---
+
+## Testing
+
+```bash
+pip install -e ".[test]"
+pytest -q
+```
+
+The tests confirm the bundled models load and that the packaged inference keeps
+exactly the variants the original Jupyter-notebook implementation does.
 
 ---
 
@@ -153,4 +189,4 @@ For questions, feedback, or collaboration inquiries:
 ## License
 
 This project is licensed under the **MIT License**.  
-See the [LICENSE](LICENSE.md) file for details.
+See the [LICENSE](LICENSE) file for details.

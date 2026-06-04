@@ -1,0 +1,14 @@
+name: lidar
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.8,<3.12
+  - numpy<2
+  - pandas>=1.3
+  - scikit-learn>=1.2,<1.3
+  # External tools used by the pipeline (must be on PATH at runtime):
+  - rtg-tools
+  - pip
+  - pip:
+      - -e .

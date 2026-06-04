@@ -94,6 +94,28 @@ def package_resource_path(filename, subdir):
     )
 
 
+def load_model(model_path):
+    """Load a pickled Random Forest model with a helpful error on version mismatch.
+
+    The bundled models were trained with scikit-learn 1.2.x. scikit-learn changed
+    its internal tree representation in 1.3, so loading these pickles under
+    scikit-learn >= 1.3 raises a ValueError. We catch that and explain the fix
+    instead of surfacing an opaque dtype error.
+    """
+    try:
+        with open(model_path, "rb") as f:
+            return pickle.load(f)
+    except (ValueError, ModuleNotFoundError, AttributeError) as e:
+        import sklearn
+
+        raise RuntimeError(
+            f"Failed to load model '{model_path}' with scikit-learn "
+            f"{sklearn.__version__}. The bundled models require scikit-learn "
+            f">=1.2,<1.3 (e.g. `pip install 'scikit-learn>=1.2,<1.3'`). "
+            f"Original error: {e}"
+        ) from e
+
+
 def format_dv(vcf_path, dv_clf):
     df = read_vcf_as_df(vcf_path)
     fmt = df[9].astype(str).str.split(":", expand=True)
@@ -183,7 +205,7 @@ def LIDAR(
     sample_id=None,
     dv_model_path=None,
     gatk_model_path=None,
-    conda_env_cmd="ml anaconda; conda activate bio;",
+    conda_env_cmd="",
     keep_workdir=False,
 ):
     workdir_path = Path(workdir)
@@ -203,10 +225,8 @@ def LIDAR(
     else:
         gatk_model_path = Path(gatk_model_path)
 
-    with open(dv_model_path, "rb") as f:
-        dv_clf = pickle.load(f)
-    with open(gatk_model_path, "rb") as f:
-        gatk_clf = pickle.load(f)
+    dv_clf = load_model(dv_model_path)
+    gatk_clf = load_model(gatk_model_path)
 
     ref_sdf = Path(ref_sdf)
     if not ref_sdf.exists():
@@ -264,7 +284,12 @@ def main():
     parser.add_argument("--gatk-model", default=None)
     parser.add_argument(  "--ref-sdf",required=True,
     help="Path to RTG reference SDF (create with: rtg format -o <ref>.sdf <ref>.fa)"  )
-    parser.add_argument("--conda-env-cmd", default="ml anaconda; conda activate bio;")
+    parser.add_argument(
+        "--conda-env-cmd",
+        default="",
+        help="Optional shell prefix to set up the environment before calling rtg "
+        "(e.g. 'conda activate myenv;'). Empty by default; rtg must be on PATH.",
+    )
     parser.add_argument("--keep-workdir", action="store_true")
 
     args = parser.parse_args()
